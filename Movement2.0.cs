@@ -4,38 +4,32 @@ using System.Collections;
 public class Movement : MonoBehaviour {
     public float speed;
     private Vector2 vect;
-    private Rigidbody2D rb;
+    private Vector2 myPosition;
+    private float multiplier = 0;
+    private bool click = true;
+
 	// Use this for initialization
 	void Start () {
-        rb = GetComponent<Rigidbody2D>();
+        
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        if (Input.GetKey(KeyCode.UpArrow)){
-            //GetComponent<Rigidbody2D>().AddForce(Vector2.up * speed);
-            Vector2 position = this.transform.position;
-            position.y++;
-            this.transform.position = position;
-        }
-        if (Input.GetKey(KeyCode.DownArrow))
+        myPosition = transform.position;
+        if (Input.GetMouseButtonDown(0)) //Right click
         {
-            Vector2 position = this.transform.position;
-            position.y--;
-            this.transform.position = position;
+            vect = Camera.main.ScreenToWorldPoint(Input.mousePosition);//Gets position of click
         }
-        if (Input.GetKey(KeyCode.LeftArrow))
+        if (Input.GetMouseButtonUp(0) && click) //Release right click
         {
-            GetComponent<Rigidbody2D>().AddForce(Vector2.left * speed);
-            /*Vector2 position = this.transform.position;
-            position.x--;
-            this.transform.position = position;*/
+            GetComponent<Rigidbody2D>().AddForce((vect- myPosition).normalized * speed * multiplier);//Adds force
+            click = false;
         }
-        if (Input.GetKey(KeyCode.RightArrow))
+        if (Input.GetMouseButton(0)) //During right click
         {
-            Vector2 position = this.transform.position;
-            position.x++;
-            this.transform.position = position;
+            multiplier += 2*(Time.deltaTime); //Adds multiplier
         }
+        
     }
 }
+
